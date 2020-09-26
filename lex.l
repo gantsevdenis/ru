@@ -18,6 +18,7 @@
 "ju"  {printf("ю"); yyless(2);}
 "ja"  {printf("я"); yyless(2);} 
 "jo"  {printf("ё"); yyless(2);}
+"\\". {printf(yytext+1); yyless(2);}
 "a"   {printf("а"); yyless(1);}
 "b"   {printf("б"); yyless(1);}
 "v"   {printf("в"); yyless(1);} 
@@ -43,16 +44,13 @@
 "y"   {printf("ы"); yyless(1);}
 "q"   {printf("ь"); yyless(1);}
 "x"   {printf("х"); yyless(1);}
-"$"   {BEGIN(latin);}
-"\\".  {printf(yytext+1);}
-<latin>"$"          {BEGIN(INITIAL);}
-<latin>[^$\n\r]     ECHO;
-<*>.                ECHO;
-<*>\n|\r            ECHO;
+"@"   {BEGIN(latin);yyless(1);}
+<latin>"@"          {BEGIN(INITIAL);}
+<latin>[^@\n\r]     ECHO;
+<*>(.|\n|\r)        ECHO;
 %%
 
 int main(int argc, char const *argv[]){
-    //flex -b -Cfe -p -p lex.l && gcc -o main -Wall lex.ru.c -O2 -s
     yyscan_t scanner;
     YY_BUFFER_STATE buf;
     rulex_init(&scanner);
@@ -65,5 +63,4 @@ int main(int argc, char const *argv[]){
     } else {
         rulex(scanner);
     }
-
 }
